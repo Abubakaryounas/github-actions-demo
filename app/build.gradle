@@ -1,7 +1,25 @@
-plugins {
-    id 'com.android.application'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.1'
+        classpath 'com.google.gms:google-services:4.3.15'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5'
+    }
 }
 
+
+apply plugin:'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+
+def keystorePropertiesFile = rootProject.file("local.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
     namespace 'com.example.github_actions_demo'
     compileSdk 33
@@ -14,6 +32,17 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+    signingConfigs {
+        release {
+            storeFile file(properties.getProperty("KEY_STORE_PATH"))
+            storePassword properties.getProperty("KEY_STORE_PASSWORD")
+            keyAlias properties.getProperty("KEY_STORE_ALIAS")
+            keyPassword properties.getProperty("KEY_STORE_PASSWORD")
+        }
     }
 
     buildTypes {
