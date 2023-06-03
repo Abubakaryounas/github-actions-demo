@@ -13,9 +13,7 @@ buildscript {
 
 apply plugin:'com.android.application'
 
-def keystorePropertiesFile = rootProject.file("local.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     namespace 'com.example.github_actions_demo'
     compileSdk 33
@@ -29,17 +27,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
-    signingConfigs {
-        release {
-            storeFile file(properties.getProperty("KEY_STORE_PATH"))
-            storePassword properties.getProperty("KEY_STORE_PASSWORD")
-            keyAlias properties.getProperty("KEY_STORE_ALIAS")
-            keyPassword properties.getProperty("KEY_STORE_PASSWORD")
-        }
-    }
+
+
 
     buildTypes {
         release {
