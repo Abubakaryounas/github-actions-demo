@@ -12,7 +12,7 @@ jobs:
          id: sign_app
          
          with:
-          releaseDirectory: app/build/outputs/apk/debug
+          releaseDirectory: app/build/outputs/apk/debug/
           signingKeyBase64: ${{ secrets.KEYSTORE }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
