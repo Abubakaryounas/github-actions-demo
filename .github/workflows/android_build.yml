@@ -28,8 +28,8 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1.2
         with:
-          fileName: 'android_keystore.jks'
-          fileDir: 'gradle'
+          fileName: 'keystore'
+          fileDir: '\githubactionsdemo\app\keystore'
           encodedString: ${{ secrets.KEYSTORE }}
 
       # Build and sign APK ("-x test" argument is used to skip tests)
