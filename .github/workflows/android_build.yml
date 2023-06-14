@@ -14,7 +14,7 @@ jobs:
       - name: Get app name
         run: |
           # Extract version number from branch name
-          version_name=$(grep "app_name" app/build.gradle | awk '{print $2}' | tr -d '\n')
+          version_name=$(grep "app_name" app/build.gradle | tr -d '\n')
 
           # Get existing version code from build.gradle
           version_code=$(grep "versionCode" app/build.gradle | awk '{print $2}' | tr -d '\n')
@@ -25,10 +25,6 @@ jobs:
           # Set environment variable for later use
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
-
-      - name: Get version
-        run: |
-          echo "version_code=${{steps.android_version.outputs.version_code}}" >> $GITHUB_ENV
 
       - name: Build APK
         id: build
@@ -59,4 +55,4 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: app/build/outputs/apk/release/
+          source_dir: app/build/outputs/apk/release/'${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'.apk
