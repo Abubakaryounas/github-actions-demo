@@ -47,15 +47,15 @@ jobs:
       - name: Make artifact
         uses: actions/upload-artifact@v2
         with:
-          name: '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
-          path: ${{steps.sign_apk.outputs.signedReleaseFile}}
-
+          name:  '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
+          path: app/build/outputs/apk/release/
 
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
         id: s3
         with:
+          name: '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
