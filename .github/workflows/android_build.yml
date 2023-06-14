@@ -66,7 +66,7 @@ jobs:
       - name: Make artifact
         uses: actions/upload-artifact@v2
         with:
-          name: '${{ env.app_name }}-${{ env.version_code }}-signed'
+          name: '${{ env.VERSION_NAME}}-${{ env.VERSION_CODE }}-signed'
           path: ${{steps.sign_aab.outputs.signedReleaseFile}}
 
 
@@ -82,7 +82,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: '${{ env.app_name }}-${{ env.version_code }}'
+          name: '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload S3
