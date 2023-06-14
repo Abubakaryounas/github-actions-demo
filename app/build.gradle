@@ -19,7 +19,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "github_actions_demo"
+        applicationId "com.example.github_actions_demo"
         minSdk 24
         targetSdk 33
         versionCode 2

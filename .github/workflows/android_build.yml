@@ -14,7 +14,7 @@ jobs:
       - name: Get app name
         run: |
           # Extract version number from branch name
-          version_name='Demo.'
+          version_name=$(grep "applicationId" app/build.gradle | awk '{print $2}' | tr -d '\n')
 
           # Get existing version code from build.gradle
           version_code=$(grep "versionCode" app/build.gradle | awk '{print $2}' | tr -d '\n')
