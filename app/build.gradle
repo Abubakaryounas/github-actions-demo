@@ -18,6 +18,8 @@ android {
     namespace 'com.example.github_actions_demo'
     compileSdk 33
 
+    def app_name='github_actions'
+
     defaultConfig {
         applicationId "com.example.github_actions_demo"
         minSdk 24
