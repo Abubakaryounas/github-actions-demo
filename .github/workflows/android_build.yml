@@ -50,26 +50,6 @@ jobs:
           name: app-release-signed
           path: ${{steps.sign_apk.outputs.signedReleaseFile}}
 
-      - name: Build AAB
-        run: bash ./gradlew bundleRelease
-
-      - name: Sign AAB
-        id: sign_aab
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.KEYSTORE }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Make artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: '${{ env.VERSION_NAME}}-${{ env.VERSION_CODE }}-signed'
-          path: ${{steps.sign_aab.outputs.signedReleaseFile}}
-
-
       - name: Build Changelog
         id: changelog
         uses: ardalanamini/auto-changelog@v3
@@ -83,13 +63,13 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/release/
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
         id: s3
         with:
-            aws_key_id: ${{ secrets.AWS_KEY_ID }}
-            aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-            aws_bucket: ${{ secrets.AWS_BUCKET }}
-            source_dir: app/build/outputs/apk/debug/
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          source_dir: app/build/outputs/apk/release/
