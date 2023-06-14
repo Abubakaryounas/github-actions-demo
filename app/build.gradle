@@ -29,40 +29,24 @@ android {
     }
 
 
-
-
     buildTypes {
+        debug{
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
         release {
             debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
     }
-    flavorDimensions "default"
-    productFlavors {
-        dev {
 
-            dimension "default"
-        }
-
-        stage {
-
-            dimension "default"
-        }
-
-        prod {
-
-            dimension "default"
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "phone-${variant.productFlavors[0].name}-${variant.buildType.name}-${variant.versionName}.apk"
-        }
     }
 
 }
