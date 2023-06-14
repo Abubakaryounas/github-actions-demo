@@ -11,6 +11,14 @@ jobs:
         id: var
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
+      - name: Get app name
+        run: |
+          echo "app_name=${{steps.android_version.outputs.app_name}}" >> $GITHUB_ENV
+
+      - name: Get version
+        run: |
+          echo "version_code=${{steps.android_version.outputs.version_code}}" >> $GITHUB_ENV
+
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease
@@ -47,7 +55,7 @@ jobs:
       - name: Make artifact
         uses: actions/upload-artifact@v2
         with:
-          name: app-release-signed
+          name: '${{ steps.get_version.outputs.versionName }}-${{ steps.get_version.outputs.nextVersionCode }}-signed'
           path: ${{steps.sign_aab.outputs.signedReleaseFile}}
 
 
@@ -63,7 +71,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: expense-manager.apk
+          name: '${{ steps.get_version.outputs.versionName }}-${{ steps.get_version.outputs.nextVersionCode }}'
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload S3

@@ -41,6 +41,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    ext {
+        version_code = '5.0.3.RELEASE'
+        app_name="Demo"
+    }
 }
 
 dependencies {
