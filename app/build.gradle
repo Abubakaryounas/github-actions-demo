@@ -45,6 +45,9 @@ android {
         version_code = '5.0.3.RELEASE'
         app_name="Demo"
     }
+    task printVersionName {
+        println android.defaultConfig.versionName
+    }
 }
 
 dependencies {
