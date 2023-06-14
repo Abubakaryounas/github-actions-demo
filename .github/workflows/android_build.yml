@@ -1,5 +1,12 @@
 name: Release Build
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Application version'
+        required: true
+        default: '1.0'
+
 jobs:
   Build:
     name: Build/Sign APK
