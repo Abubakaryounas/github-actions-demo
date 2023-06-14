@@ -26,20 +26,21 @@ jobs:
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
 
+
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1.2
+        with:
+            fileName: 'android_keystore.jks'
+            fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
+            encodedString: ${{ secrets.KEYSTORE }}
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease -x test
-
-      - name: Sign APK
-        id: sign_apk
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory:  '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
-          signingKeyBase64: ${{ secrets.KEYSTORE }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
       - name: Verify Signature
         run: $ANDROID_SDK_ROOT/build-tools/33.0.1/apksigner verify --print-certs app/build/outputs/apk/release/<<application name>>_${{ github.event.inputs.version }}.apk
