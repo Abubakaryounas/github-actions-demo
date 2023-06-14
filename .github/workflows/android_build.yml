@@ -47,23 +47,10 @@ jobs:
       - name: Make artifact
         uses: actions/upload-artifact@v2
         with:
-          name: app-release-signed
+          name: '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
           path: ${{steps.sign_apk.outputs.signedReleaseFile}}
 
-      - name: Build Changelog
-        id: changelog
-        uses: ardalanamini/auto-changelog@v3
-        with:
-          mention-authors: false
-          mention-new-contributors: false
-          include-compare: false
-          semver: false
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: '${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}'
-          path: app/build/outputs/apk/release/
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
