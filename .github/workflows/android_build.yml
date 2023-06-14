@@ -34,36 +34,13 @@ jobs:
         id: sign_apk
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: app/build/outputs/apk/release/
           signingKeyBase64: ${{ secrets.KEYSTORE }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Make artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}
-          path: ${{steps.sign_apk.outputs.signedReleaseFile}}
 
-      - name: Build AAB
-        run: bash ./gradlew bundleRelease
-
-      - name: Sign AAB
-        id: sign_aab
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.KEYSTORE }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Make artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}-release-signed
-          path: ${{steps.sign_aab.outputs.signedReleaseFile}}
 
 
       - name: Build Changelog
@@ -79,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}.apk
-          path: app/build/outputs/apk/release
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
