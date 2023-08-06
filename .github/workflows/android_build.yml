@@ -46,6 +46,9 @@ jobs:
             fileName: 'android_keystore.jks'
             fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
             encodedString: ${{ secrets.KEYSTORE }}
+      - name: Install Android Sdk Build Tools
+        run: |
+          echo y | sdkmanager "build-tools;30.0.3"
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease -x test
