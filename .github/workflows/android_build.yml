@@ -46,9 +46,6 @@ jobs:
             fileName: 'android_keystore.jks'
             fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
             encodedString: ${{ secrets.KEYSTORE }}
-      - name: Install Android Sdk Build Tools
-        run: |
-          echo y | sdkmanager "build-tools;30.0.3"
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease -x test
@@ -61,8 +58,8 @@ jobs:
       - name: Sign APk
         run: |
           echo ${{ secrets.PKCS8_KEY }} | base64 -d > platform.pk8
-          apksigner sign --key platform.pk8 --cert platform.x509.pem app/build/outputs/apk/release/
-
+          echo ${{ secrets.PKCS8_CERT }} | base64 -d > platform.x509.pem
+          jarsigner -verbose -keystore platform.pk8 -storetype pkcs8 -storepassv${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} -signedjar app/build/outputs/apk/release/ app/build/outputs/apk/release/ platform.x509.pem
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
