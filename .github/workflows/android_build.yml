@@ -58,7 +58,6 @@ jobs:
       - name: Sign APk
         run: |
           echo ${{ secrets.PKCS8_KEY }} | base64 -d > platform.pk8
-          echo ${{ secrets.PKCS8_CERT }} | base64 -d > platform.x509.pem
           apksigner sign --key platform.pk8 --cert platform.x509.pem app/build/outputs/apk/release/
 
 
