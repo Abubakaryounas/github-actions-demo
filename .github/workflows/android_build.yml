@@ -33,23 +33,24 @@ jobs:
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
 
-
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1.2
-        with:
-            fileName: 'platform.pk8'
-            fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
-            encodedString: ${{ secrets.PKCS8_KEY }}
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease -x test
         env:
-          SIGNING_KEY_STORE_PATH: ${{ steps.decode_keystore.outputs.filePath }}
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
+
+      - name: Sign APK
+        id: sign_apk
+        uses: r0adkll/sign-android-release@v1
+        with:
+            releaseDirectory: app/build/outputs/apk/release
+            signingKeyBase64: ${{ secrets.PKCS8_KEY }}
+            alias: ${{ secrets.KEY_ALIAS }}
+            keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+            keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
