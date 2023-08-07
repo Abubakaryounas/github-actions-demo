@@ -47,7 +47,7 @@ jobs:
             unzip master.zip
             cd sign-master
             
-            cp app/build/outputs/apk/release/github-actions-demo_2.0.apk ./
+            cp app/build/outputs/apk/release ./
             cp app/src/platform.x509.pem ./
             cp app/src/platform.pk8 ./
             
