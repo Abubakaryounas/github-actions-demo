@@ -40,12 +40,13 @@ jobs:
 
 
       - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1.2
-        with:
-          fileName: 'android_keystore.jks'
-          fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
-          encodedString: ${{ secrets.KEYSTORE }}
+        env:
+            ENCODED_STRING: ${{ secrets.SIGNING_KEY_STORE_BASE64 }}
+            SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
+
+        run: |
+            echo $ENCODED_STRING > keystore-b64.txt
+            base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease -x test
