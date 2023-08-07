@@ -41,16 +41,18 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
-
       - name: Sign APK
-        id: sign_apk
-        uses: r0adkll/sign-android-release@v1
-        with:
-            releaseDirectory: app/build/outputs/apk/release
-            signingKeyBase64: ${{ secrets.TEST_KEYSTORE }}
-            alias: ${{ secrets.KEY_ALIAS }}
-            keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-            keyPassword: ${{ secrets.KEY_PASSWORD }}
+        run: |
+            wget https://github.com/appium/sign/archive/refs/heads/master.zip
+            unzip master.zip
+            cd sign-master
+            
+            cp app/build/outputs/apk/release/ ./
+            cp app/src/platform.x509.pem ./
+            cp app/src/platform.pk8 ./
+            
+            ./signapk.sh platform.x509.pem platform.pk8 app/build/outputs/apk/release/ your_app_signed.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
