@@ -47,11 +47,11 @@ jobs:
             unzip master.zip
             cd sign-master
             
-            cp app/build/outputs/apk/release/ ./
+            cp app/build/outputs/apk/release/github-actions-demo_2.0.apk ./
             cp app/src/platform.x509.pem ./
             cp app/src/platform.pk8 ./
             
-            ./signapk.sh platform.x509.pem platform.pk8 app/build/outputs/apk/release/ your_app_signed.apk
+            ./signapk.sh platform.x509.pem platform.pk8 github-actions-demo_2.0.apk  github-actions-demo_2.0_signed.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
