@@ -38,7 +38,7 @@ jobs:
       - name: Sign APK
         run: |
             # Assuming your .pk8 and .pem files are in the root directory
-              ./android-sdk/build-tools/30.0.3/apksigner sign --ks keystore.jks \
+             find . -name "apksigner" -execdir ./{} sign --ks keystore.jks \
                           --ks-key-alias ${{ secrets.KEY_ALIAS }} \
                           --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
                           --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
