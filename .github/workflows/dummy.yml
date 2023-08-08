@@ -30,7 +30,7 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
             sdk-platform: '30'
-            build-tools: '29.0.3''
+            build-tools: '29.0.3'
 
       - name: Decode Keystore
         run: |
