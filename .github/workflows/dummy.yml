@@ -30,7 +30,7 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
             sdk-platform: '30'
-            build-tools: '29.0.3'
+            build-tools: '30.0.0'
 
       - name: Decode Keystore
         run: |
@@ -39,7 +39,7 @@ jobs:
       - name: Sign APK
         run: |
             # Assuming your .pk8 and .pem files are in the root directory
-                ~/android-sdk/build-tools/29.0.3/apksigner sign --ks keystore.jks \
+                ~/android-sdk/build-tools/30.0.0/apksigner sign --ks keystore.jks \
                           --ks-key-alias ${{ secrets.KEY_ALIAS }} \
                           --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
                           --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
