@@ -26,6 +26,11 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease
 
+      - name: Download and Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+            sdk-platform: '30'
+
       - name: Decode Keystore
         run: |
             echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
@@ -34,7 +39,7 @@ jobs:
       - name: Sign APK
         run: |
             # Assuming your .pk8 and .pem files are in the root directory
-            apksigner sign --ks-release keystore.jks \
+          ./android-sdk/build-tools/30.0.3/apksigner sign --ks keystore.jks \
                           --ks-key-alias ${{ secrets.KEY_ALIAS }} \
                           --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
                           --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
