@@ -35,15 +35,15 @@ jobs:
 
       - name: Sign APK
         run: |
-          echo -n "${{ secrets.KEYSTORE_PK8 }}" > key.pk8
-          echo -n "${{ secrets.KEYSTORE_PEM }}" > key.pem
+          echo -n "${{ secrets.PLATFORM_PK8 }}" > key.pk8
+          echo -n "${{ secrets.PLATFORM_PEM }}" > key.pem
           
       - name: Debugging Info
         run: |
           echo "KEYSTORE_PK8:"
-          echo "${{ secrets.KEYSTORE_PK8 }}"
+          echo "${{ secrets.PLATFORM_PK8 }}"
           echo "KEYSTORE_PEM:"
-          echo "${{ secrets.KEYSTORE_PEM }}"
+          echo "${{ secrets.PLATFORM_PEM }}"
 
       - name: Sign APK using apksigner
         run: |
