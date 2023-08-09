@@ -35,8 +35,8 @@ jobs:
 
       - name: Sign APK
         run: |
-          echo -n "${{ secrets.PLATFORM_PK8 }}" > key.pk8
-          echo -n "${{ secrets.PLATFORM_PEM }}" > key.pem
+          echo "${{ secrets.PLATFORM_PK8 }}" | base64 -d > key.pk8
+           echo "${{ secrets.PLATFORM_PEM }}" | base64 -d > key.pem
           
       - name: Debugging Info
         run: |
