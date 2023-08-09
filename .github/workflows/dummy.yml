@@ -1,4 +1,4 @@
-name: Sign APK
+name: Sign test APK
 
 on:
   push:
@@ -35,8 +35,8 @@ jobs:
 
       - name: Sign APK
         run: |
-            echo "$KEYSTORE_PK8" > key.pk8
-            echo "$KEYSTORE_PEM" > key.pem
+          echo -n "$KEYSTORE_PK8" > key.pk8
+          echo -n "$KEYSTORE_PEM" > key.pem
       - name: Sign APK using apksigner
         run: |
             export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
