@@ -19,11 +19,20 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: actions/setup-android@v2
-        with:
-          sdk-platform: '30'
-          sdk-components: 'platform-tools,build-tools-30.0.3'
+      - name: Download Android SDK
+        run: wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+      - name: Unzip Android SDK
+        run: unzip commandlinetools-linux-7302050_latest.zip -d $HOME/android-sdk
+      - name: Export Android SDK path
+        run: |
+          echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $HOME/.bashrc
+          source $HOME/.bashrc
+
+      - name: Accept Android licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --licenses
+
+      - name: Install Android Build Tools
+        run: $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager "build-tools;30.0.3"
 
       - name: Build APK
         run: ./gradlew assembleDebug
