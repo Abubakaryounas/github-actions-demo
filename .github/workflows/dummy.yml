@@ -38,6 +38,10 @@ jobs:
 
       - name: Sign APK
         run: |
+          # Download and install the apksigner tool
+          wget https://dl.google.com/android/repository/build-tools_r30.0.3-linux.zip
+          unzip -q build-tools_r30.0.3-linux.zip -d android-sdk/build-tools/
+          rm build-tools_r30.0.3-linux.zip
           # Assuming your .pk8 and .pem files are in the root directory
           ./android-sdk/build-tools/30.0.3/apksigner sign --ks keystore.jks \
                         --ks-key-alias ${{ secrets.KEY_ALIAS }} \
