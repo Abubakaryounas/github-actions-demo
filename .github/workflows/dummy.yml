@@ -35,11 +35,7 @@ jobs:
       - name: Sign Debug APK
         run: |
           # Assuming your .pk8 and .pem files are in the root directory
-          apksigner sign --key platform.pk8 --cert platform.x509.pem app/build/outputs/apk/debug/app-debug.apk \
-            --ks keystore.jks \
-            --ks-key-alias ${{ secrets.KEY_ALIAS }} \
-            --ks-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
-            --key-pass pass:${{ secrets.KEY_PASSWORD }}
+          apksigner sign --key file.pk8 --cert file.pem app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
