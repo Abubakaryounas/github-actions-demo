@@ -24,7 +24,7 @@ jobs:
         run: sudo apt-get install -y openjdk-11-jdk
 
       - name: Install Android SDK
-        uses: actions/setup-android@v2
+        uses: android-actions/setup-android@v2
         with:
           sdk-version: '31.0.0' # Replace with your desired SDK version
 
