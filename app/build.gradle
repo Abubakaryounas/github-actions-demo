@@ -36,6 +36,12 @@ android {
             storePassword System.getenv("KEY_STORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
+
+            doLast {
+                println "KEY_STORE_PASSWORD: " + System.getenv("KEY_STORE_PASSWORD")
+                println "KEY_ALIAS: " + System.getenv("KEY_ALIAS")
+                println "KEY_PASSWORD: " + System.getenv("KEY_PASSWORD")
+            }
         }
     }
 
