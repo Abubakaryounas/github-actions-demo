@@ -31,7 +31,7 @@ jobs:
 
       - name: Download and Install apksigner
         run: |
-          sdkmanager "build-tools;30.0.3"
+          sdkmanager "build-tools;33.0.1"
       - name: Decode Keystore
         run: |
           echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
