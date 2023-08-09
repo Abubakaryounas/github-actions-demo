@@ -1,3 +1,24 @@
+Skip to content
+Abubakaryounas
+/
+github-actions-demo
+
+Type / to search
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Sign Debug APK
+Test # 4 #29
+Jobs
+Run details
+Workflow file for this run
+.github/workflows/dummy.yml at 53e65ca
 name: Sign Debug APK
 
 on:
@@ -14,38 +35,31 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
+          cache: gradle
 
-      - name: Download Android SDK
-        run: wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-      - name: Unzip Android SDK
-        run: unzip commandlinetools-linux-7302050_latest.zip -d $HOME/android-sdk
-      - name: Export Android SDK path
-        run: |
-          echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $HOME/.bashrc
-          source $HOME/.bashrc
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
 
-      - name: Accept Android licenses
-        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager --licenses
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Install Android Build Tools
-        run: $ANDROID_SDK_ROOT/cmdline-tools/bin/sdkmanager "build-tools;30.0.3"
-
-      - name: Build APK
+      - name: Build Debug APK
         run: ./gradlew assembleDebug
 
+      - name: Download and Install apksigner
+        run: |
+          sdkmanager "build-tools;30.0.3"
       - name: Decode Keystore
         run: |
           echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
-
       - name: Sign Debug APK
         run: |
-          # Assuming your .pk8 and .pem files are in the root directory
-          apksigner sign --key file.pk8 --cert file.pem app/build/outputs/apk/debug/app-debug.apk
-
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore app/build/outputs/apk/debug/keystore.jks -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} app/build/outputs/apk/debug/app-debug.apk ${{ secrets.KEY_ALIAS }}
+          $ANDROID_SDK_ROOT/build-tools/30.0.3/zipalign -v 4 app-debug.apk app-debug-signed.apk
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
