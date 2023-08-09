@@ -33,10 +33,6 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease
 
-      - name: Set up jarsigner
-        run: sudo update-alternatives --set "jarsigner" "$(update-alternatives --list "jarsigner" | grep "java-1.11.0-openjdk" | head -n 1)"
-
-
       - name: Retrieve PK8 and PEM from secrets
         run: |
           echo "$PLATFORM_PK8" | base64 -d > keystore.pk8
@@ -52,7 +48,7 @@ jobs:
 
       - name: Sign APK
         run: |
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.pk8 -storepass ${{ env.KEY_STORE_PASSWORD }} app-release-unsigned.apk ${{ env.KEY_ALIAS }}
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore platform.pk8 -storepass ${{ env.KEY_STORE_PASSWORD }} app-release-unsigned.apk ${{ env.KEY_ALIAS }}
       - name: Verify and Align APK
         run: |
                 zipalign -v 4 app-release-unsigned.apk app-release-signed-aligned.apk
