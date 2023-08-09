@@ -20,35 +20,36 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      
-
-      - uses: actions/checkout@v1
-      - uses: buildtool/setup-buildtools-action@v1
-      - run: build
-
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Build APK
         run: ./gradlew assembleRelease
 
-      - name: Retrieve PK8 and PEM from secrets
-        run: |
-          echo "$PLATFORM_PK8" | base64 -d > keystore.pk8
-          echo "$PLATFORM_PEM" | base64 -d > keystore.pem
+      - name: Download and Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          sdk-platform: '30'
 
-      - name: Retrieve keystore alias and password from secrets
-        env:
-          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      - name: Decode Keystore
         run: |
-          echo "KEY_ALIAS=${KEY_ALIAS}" >> $GITHUB_ENV
-          echo "KEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}" >> $GITHUB_ENV
+          echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
+
 
       - name: Sign APK
         run: |
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore platform.pk8 -storepass ${{ env.KEY_STORE_PASSWORD }} app-release-unsigned.apk ${{ env.KEY_ALIAS }}
-      - name: Verify and Align APK
-        run: |
-                zipalign -v 4 app-release-unsigned.apk app-release-signed-aligned.apk
-                mv app-release-signed-aligned.apk app-signed.apk
+          # Assuming your .pk8 and .pem files are in the root directory
+          ./android-sdk/build-tools/30.0.3/apksigner sign --ks keystore.jks \
+                        --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+                        --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
+                        --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
+                        --in app/build/outputs/apk/release/app-release-unsigned.apk \
+                        --out app/build/outputs/apk/release/app-release-signed.apk \
+                        --key-pk8 platform.pk8 \
+                        --key-pem platform.x509.pem
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: signed-apk
+          path: app/build/outputs/apk/release/app-release-signed.apk
