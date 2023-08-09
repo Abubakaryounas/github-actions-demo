@@ -1,4 +1,4 @@
-name: Build Debug APK
+name: Sign Debug APK
 
 on:
   push:
@@ -37,10 +37,10 @@ jobs:
         run: |
           echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
 
-      - name: Sign APK
+      - name: Sign Debug APK
         run: |
           # Assuming your .pk8 and .pem files are in the root directory
-          ~/usr/local/android-sdk/build-tools/30.0.3/apksigner sign --ks keystore.jks \
+          $ANDROID_SDK_ROOT/build-tools/30.0.3/apksigner sign --ks keystore.jks \
                         --ks-key-alias ${{ secrets.KEY_ALIAS }} \
                         --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
                         --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
@@ -52,5 +52,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: debug-apk
+          name: signed-debug-apk
           path: app/build/outputs/apk/debug/app-debug-signed.apk
