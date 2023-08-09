@@ -37,8 +37,8 @@ jobs:
           echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
       - name: Sign Debug APK
         run: |
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore app/build/outputs/apk/debug/keystore.jks -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} app/build/outputs/apk/debug/app-debug.apk ${{ secrets.KEY_ALIAS }}
-          $ANDROID_SDK_ROOT/build-tools/30.0.3/zipalign -v 4 app-debug.apk app-debug-signed.apk
+          apksigner sign --key platform.pk8 --cert platform.x509.pem app/build/outputs/apk/debug/app-debug.apk
+        
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
