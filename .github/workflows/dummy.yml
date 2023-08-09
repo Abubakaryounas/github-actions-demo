@@ -20,8 +20,7 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Install OpenJDK
-        run: sudo apt-get install -y openjdk-11-jdk
+      
 
       - uses: actions/checkout@v1
       - uses: buildtool/setup-buildtools-action@v1
