@@ -33,21 +33,15 @@ jobs:
         run: |
           sdkmanager "build-tools;30.0.3"
 
-      - name: Decode Keystore
-        run: |
-          echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
-
       - name: Sign APK
         run: |
-          # Assuming your .pk8 and .pem files are in the root directory
-          ~/usr/local/android-sdk/build-tools/30.0.3/apksigner sign --ks keystore.jks \
-                        --ks-key-alias ${{ secrets.KEY_ALIAS }} \
-                        --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
-                        --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
-                        --in app/build/outputs/apk/release/app-release-unsigned.apk \
-                        --out app/build/outputs/apk/release/app-release-signed.apk \
-                        --key-pk8 platform.pk8 \
-                        --key-pem platform.x509.pem
+            echo "$KEYSTORE_PK8" > key.pk8
+            echo "$KEYSTORE_PEM" > key.pem
+      - name: Sign APK using apksigner
+        run: |
+            export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
+            apksigner sign --ks key.pk8 --ks-pass pass:"" --out app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-unsigned.apk
+      
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
