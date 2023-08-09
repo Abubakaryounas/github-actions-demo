@@ -48,7 +48,7 @@ jobs:
       - name: Sign APK using apksigner
         run: |
             export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
-            apksigner sign --ks key.pk8 --ks-pass pass:"" --key key.pem --out app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-unsigned.apk
+            apksigner sign --key key.pk8 --key-pass pass:"" --cert key.pem --out app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-unsigned.apk
       
 
       - name: Upload Artifact
