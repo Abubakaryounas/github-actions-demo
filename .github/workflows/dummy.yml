@@ -1,4 +1,4 @@
-name: Sign APK
+name: Sign Debug APK
 
 on:
   push:
@@ -26,25 +26,31 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build APK
-        run: ./gradlew assembleRelease
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
       - name: Download and Install apksigner
         run: |
           sdkmanager "build-tools;30.0.3"
 
-      - name: Sign APK
+      - name: Decode Keystore
         run: |
-            echo "$KEYSTORE_PK8" > key.pk8
-            echo "$KEYSTORE_PEM" > key.pem
-      - name: Sign APK using apksigner
+          echo ${{ secrets.KEYSTORE }} | base64 -d > keystore.jks
+
+      - name: Sign Debug APK
         run: |
-            export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
-            apksigner sign --ks key.pk8 --ks-pass pass:"" --out app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-unsigned.apk
-      
+          # Assuming your .pk8 and .pem files are in the root directory
+          $ANDROID_SDK_ROOT/build-tools/30.0.3/apksigner sign --ks keystore.jks \
+                        --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+                        --ks-pass pass:${{ secrets.KEY_PASSWORD }} \
+                        --key-pass pass:${{ secrets.KEY_STORE_PASSWORD }} \
+                        --in app/build/outputs/apk/debug/app-debug.apk \
+                        --out app/build/outputs/apk/debug/app-debug-signed.apk \
+                        --key-pk8 platform.pk8 \
+                        --key-pem platform.x509.pem
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: signed-apk
-          path: app/build/outputs/apk/release/app-release-signed.apk
+          name: signed-debug-apk
+          path: app/build/outputs/apk/debug/app-debug-signed.apk
