@@ -23,6 +23,10 @@ jobs:
       - name: Install OpenJDK
         run: sudo apt-get install -y openjdk-11-jdk
 
+      - uses: actions/checkout@v1
+      - uses: buildtool/setup-buildtools-action@v1
+      - run: build
+
       - name: Install Android SDK
         uses: android-actions/setup-android@v2
         with:

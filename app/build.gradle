@@ -32,31 +32,26 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("keystore.jks")
-            storePassword System.getenv("KEY_STORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
+
+
+            storeType 'pk8'
+            keyAlias 'techless'
+            storeFile file('/home/abubakar-admin/Keystores/keys/Signing keys/platform.pk8')
+            keyPassword 'techle$$'
+            keyStorePassword 'techle$$'
         }
     }
-
 
     buildTypes {
-
-
-
         release {
-            debuggable true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "${rootProject.name}_${versionName}.apk"
-                }
-            }
-
+            signingConfig signingConfigs.release
+            // other release configurations...
         }
-
+        // other build types...
     }
+
+
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
