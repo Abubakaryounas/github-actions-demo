@@ -38,7 +38,7 @@ jobs:
           encodedString: ${{ secrets.KEYSTORE }}
       - name: Build APK
         run: ./gradlew assembleRelease
-        working-directory: ${{ github.workspace }}
+
 
       - name: Download and Install apksigner
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Sign APK using apksigner
         run: |
           export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
-          apksigner sign --key key.pk8 --cert key.pem --out app/build/outputs/apk/release/github-actions-demo_2.0.apk app/build/outputs/apk/release/github-actions-demo_2.0-signed.apk
+          apksigner sign --key key.pk8 --cert key.pem --out app/build/outputs/apk/release/github-actions-demo_2.0.apk app/build/outputs/apk/release/github-actions-demo_2.0.apk
       
 
       - name: Upload APK
