@@ -1,11 +1,8 @@
-name: Release Build
+name: Release Build new
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Application version'
-        required: true
-        default: '1.0'
+  push:
+    branches:
+      - test # Adjust this to your main branch
 
 
 jobs:
@@ -36,6 +33,9 @@ jobs:
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
           encodedString: ${{ secrets.KEYSTORE }}
+          
+          
+
       - name: Build APK
         run: ./gradlew assembleRelease
         working-directory: ${{ github.workspace }}
