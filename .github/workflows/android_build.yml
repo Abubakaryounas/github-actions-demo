@@ -35,27 +35,30 @@ jobs:
           # Set environment variable for later use
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1.2
-        with:
-          fileName: 'android_keystore.jks'
-          fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
           encodedString: ${{ secrets.KEYSTORE }}
       - name: Build APK
-        id: build
-        run: bash ./gradlew assembleRelease -x test
-        env:
-          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+        run: ./gradlew assembleRelease
+        working-directory: ${{ github.workspace }}
 
+      - name: Download and Install apksigner
+        run: |
+          sdkmanager "build-tools;30.0.3"
+
+      - name: Sign APK
+        run: |
+          echo "${{ secrets.PLATFORM_PK8 }}" | base64 -d > key.pk8
+           echo "${{ secrets.PLATFORM_PEM }}" | base64 -d > key.pem
+
+      - name: Sign APK using apksigner
+        run: |
+          export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
+          apksigner sign --key key.pk8 --cert key.pem --out app/build/outputs/apk/release/github-actions-demo_2.0-signed.apk app/build/outputs/apk/release/github-actions-demo_2.0.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: release.zip
-          path: app/build/outputs/apk/release/
+          path: app/build/outputs/apk/release/github-actions-demo_2.0-signed.apk
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
@@ -64,5 +67,5 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: app/build/outputs/apk/release/
+          source_dir: app/build/outputs/apk/release/github-actions-demo_2.0-signed.apk
           destination_dir: ''
