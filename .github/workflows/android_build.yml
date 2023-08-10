@@ -52,13 +52,14 @@ jobs:
       - name: Sign APK using apksigner
         run: |
           export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
-          apksigner sign --key key.pk8 --cert key.pem --out app/build/outputs/apk/release/github-actions-demo_2.0.apk app/build/outputs/apk/release/github-actions-demo_2.0.apk
+          apksigner sign --key key.pk8 --cert key.pem --out app/build/outputs/apk/release/github-actions-demo_2.0.apk app/build/outputs/apk/release/github-actions-demo_2.0-signed.apk
+      
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: release.zip
-          path: app/build/outputs/apk/release/github-actions-demo_2.0.apk
+          path: app/build/outputs/apk/release/
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
@@ -67,5 +68,5 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: app/build/outputs/apk/release/github-actions-demo_2.0.apk
+          source_dir: app/build/outputs/apk/release/
           destination_dir: ''
