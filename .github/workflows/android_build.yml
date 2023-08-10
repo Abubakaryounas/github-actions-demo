@@ -1,11 +1,9 @@
-name: Release Build
+name: Release Build new
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Application version'
-        required: true
-        default: '1.0'
+  push:
+    branches:
+      - test # Adjust this to your main branch
+
 
 jobs:
   Build:
@@ -20,6 +18,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -27,43 +29,39 @@ jobs:
         run: |
           # Extract version number from branch name
           version_name=$(grep app/build.gradle | tr -d '\n')
-
           # Get existing version code from build.gradle
           version_code=$(grep "versionCode" app/build.gradle | awk '{print $2}' | tr -d '\n')
-
           # Increment existing version code by 1
           version_code=$((version_code + 1))
-
           # Set environment variable for later use
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
 
-
-      - name: Decode Keystore
-        env:
-            ENCODED_STRING: ${{ secrets.KEYSTORE }}
-            SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-
-        run: |
-            echo $ENCODED_STRING > keystore-b64.txt
-            base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
       - name: Build APK
-        id: build
-        run: bash ./gradlew assembleRelease -x test
-        env:
-          SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-          SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+        run: ./gradlew assembleRelease
+        working-directory: ${{ github.workspace }}
 
-      - name: Verify Signature
-        run: $ANDROID_SDK_ROOT/build-tools/33.0.1/apksigner verify --print-certs app/build/outputs/apk/release/<<application name>>_${{ github.event.inputs.version }}.apk
+      - name: Download and Install apksigner
+        run: |
+          sdkmanager "build-tools;30.0.3"
+
+      - name: Sign APK
+        run: |
+          echo "${{ secrets.PLATFORM_PK8 }}" | base64 -d > key.pk8
+          echo "${{ secrets.PLATFORM_PEM }}" | base64 -d > key.pem
+          echo "${{ github.workspace }}"
+
+      - name: Sign APK using apksigner
+        run: |
+          export PATH="$PATH:$ANDROID_HOME/build-tools/30.0.3"  # Update <version> with the appropriate build tools version
+          apksigner sign --key key.pk8 --cert key.pem --out app/build/outputs/apk/release/github-actions-demo_2.0.apk app/build/outputs/apk/release/github-actions-demo_2.0.apk
+      
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: release.zip
-          path: app/build/outputs/apk/release/
+          path: app/build/outputs/apk/release/github-actions-demo_2.0.apk
 
       - name: Upload S3
         uses: shallwefootball/s3-upload-action@master
