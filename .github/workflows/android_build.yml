@@ -38,7 +38,7 @@ jobs:
           encodedString: ${{ secrets.KEYSTORE }}
       - name: Build APK
         run: ./gradlew assembleRelease
-
+        working-directory: ${{ github.workspace }}
 
       - name: Download and Install apksigner
         run: |
@@ -47,7 +47,8 @@ jobs:
       - name: Sign APK
         run: |
           echo "${{ secrets.PLATFORM_PK8 }}" | base64 -d > key.pk8
-           echo "${{ secrets.PLATFORM_PEM }}" | base64 -d > key.pem
+          echo "${{ secrets.PLATFORM_PEM }}" | base64 -d > key.pem
+          echo "${{ github.workspace }}"
 
       - name: Sign APK using apksigner
         run: |
