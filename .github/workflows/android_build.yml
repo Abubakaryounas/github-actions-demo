@@ -7,6 +7,7 @@ on:
         required: true
         default: '1.0'
 
+
 jobs:
   Build:
     name: Build/Sign APK
@@ -27,37 +28,28 @@ jobs:
         run: |
           # Extract version number from branch name
           version_name=$(grep app/build.gradle | tr -d '\n')
-
           # Get existing version code from build.gradle
           version_code=$(grep "versionCode" app/build.gradle | awk '{print $2}' | tr -d '\n')
-
           # Increment existing version code by 1
           version_code=$((version_code + 1))
-
           # Set environment variable for later use
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
-
-
       - name: Decode Keystore
-        env:
-          ENCODED_STRING: ${{ secrets.KEYSTORE }}
-          SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
-
-        run: |
-          echo $ENCODED_STRING > keystore-b64.txt
-          base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'android_keystore.jks'
+          fileDir: '/home/runner/work/<<project name>>/<<project name>>/app/keystore/'
+          encodedString: ${{ secrets.KEYSTORE }}
       - name: Build APK
         id: build
         run: bash ./gradlew assembleRelease -x test
         env:
-          SIGNING_KEY_STORE_PATH: ${{ secrets.SIGNING_KEY_STORE_PATH }}
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
 
-      - name: Verify Signature
-        run: $ANDROID_SDK_ROOT/build-tools/33.0.1/apksigner verify --print-certs app/build/outputs/apk/release/<<application name>>_${{ github.event.inputs.version }}.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
